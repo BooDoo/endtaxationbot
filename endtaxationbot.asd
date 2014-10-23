@@ -8,6 +8,7 @@
   :license "BSD 2-Clause License"
   :depends-on (:cl-twitter
                :cl-twit-repl
+               :bordeaux-threads
                :anaphora)
   :components
   ((:file "package")
