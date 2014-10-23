@@ -7,9 +7,9 @@ A simple Twitter bot that replies to any mentions of the word
 It searches for "taxation" once per hour, requesting ten replies since
 the last reply it received. It replies to each search result, unless
 that result is from or mentions a user in a tweet already replied to
-from this search.
+from this search. The replies are spaced by one second.
 
-See the LICENSE file for text of BSD 2-Clause License.
+Released under a BSD 2-Clause License. See the LICENSE file.
 
 Bill St. Clair
 23 October 2014
