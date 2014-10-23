@@ -10,8 +10,11 @@
 ;; Change "http://" to "https://", as Twitter now requires
 (load "twitter-preload-patches")
 
-(load "endtaxationbot.asd")
-(ql:quickload :endtaxationbot)
+(defun reload ()
+  (load "endtaxationbot.asd")
+  (ql:quickload :endtaxationbot :verbose t))
+
+(reload)
 
 (defun etb ()
   (in-package :endtaxationbot))
@@ -20,9 +23,11 @@
 
 (defun start-swank (&optional port)
   (when port
+    (when (eq port t)
+      (setf port 4005))
     (ql:quickload "swank")
     (funcall (find-symbol "CREATE-SERVER" :swank)
              :port port :dont-close t)))
 
 (defun reload ()
-  (ql:quickload :endtaxationbot :verbose t))
+  (cl-user::reload))
