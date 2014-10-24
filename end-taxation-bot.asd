@@ -1,7 +1,7 @@
 ; -*- mode: lisp -*-
 (in-package #:cl-user)
 
-(asdf:defsystem :endtaxationbot
+(asdf:defsystem :end-taxation-bot
   :description "A simple Twitter bot that equates taxation with extortion."
   :author "Bill St. Clair <bill@billstclair.com>"
   :version "0.1"

@@ -7,27 +7,23 @@
            (load "http://beta.quicklisp.org/quicklisp.lisp")
            (funcall (find-symbol "INSTALL" :quicklisp-quickstart)))))
 
+(defvar *etb-directory*
+  (directory-namestring *loading-file-source-file*))
+
+(defun etb-relative-path (path)
+  (merge-pathnames path *etb-directory*))
+
+(defun load-etb-relative (path)
+  (load (etb-relative-path path)))
+
 ;; Change "http://" to "https://", as Twitter now requires
-(load "twitter-preload-patches")
+(load-etb-relative "twitter-preload-patches")
 
-(defun reload ()
-  (load "endtaxationbot.asd")
-  (ql:quickload :endtaxationbot :verbose t))
+(defun reload-etb ()
+  (load-etb-relative "end-taxation-bot.asd")
+  (ql:quickload :end-taxation-bot :verbose t))
 
-(reload)
+(reload-etb)
 
 (defun etb ()
-  (in-package :endtaxationbot))
-
-(etb)
-
-(defun start-swank (&optional port)
-  (when port
-    (when (eq port t)
-      (setf port 4005))
-    (ql:quickload "swank")
-    (funcall (find-symbol "CREATE-SERVER" :swank)
-             :port port :dont-close t)))
-
-(defun reload ()
-  (cl-user::reload))
+  (in-package :end-taxation-bot))
