@@ -19,6 +19,6 @@ To start, if "ccl" runs the lisp and the code is in ~/endtaxationbot/:
 ccl -l "~/endtaxationbot/start" -e "(etb:start-bot-thread)"
 ```
 
-Bill St. Clair
+Bill St. Clair<br/>
 Created: 23 October 2014<br/>
 Updated: 24 October 2014
