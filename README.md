@@ -11,5 +11,14 @@ from this search. The replies are spaced by one second.
 
 Released under a BSD 2-Clause License. See the LICENSE file.
 
+Known to work in Clozure Common Lisp, http://ccl.clozure.com/
+
+To start, if "ccl" runs the lisp and the code is in ~/endtaxationbot/:
+
+```
+ccl -l "~/endtaxationbot/start" -e "(etb:start-bot-thread)"
+```
+
 Bill St. Clair
-23 October 2014
+Created: 23 October 2014
+Updated: 24 October 2014
