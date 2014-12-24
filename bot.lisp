@@ -51,19 +51,20 @@
 
 (defun call-avoiding-duplicate-users (tweets thunk)
   (loop for tweet in tweets
+     for user = (twit:tweet-user tweet)
      with already-seen = nil
      do
-       (loop with ids = (cons (twit:twitter-user-id
-                               (twit:tweet-user tweet))
-                              (mapcar #'twit:user-mention-id
-                                      (twit:twitter-entities-user-mentions
-                                       (twit:tweet-entities tweet))))
-          for seen in ids
-          do (when (member seen already-seen)
-               (return nil))
-          finally
-            (setf already-seen (nconc ids already-seen))
-            (funcall thunk tweet))))
+       (unless (equal *bot-user-name* (twit:twitter-user-screen-name user))
+	 (loop with ids = (cons (twit:twitter-user-id user)
+				(mapcar #'twit:user-mention-id
+					(twit:twitter-entities-user-mentions
+					 (twit:tweet-entities tweet))))
+	    for seen in ids
+	    do (when (member seen already-seen)
+		 (return nil))
+	    finally
+	      (setf already-seen (nconc ids already-seen))
+	      (funcall thunk tweet)))))
 
 (defparameter *pause-between-tweets* 1)
 
@@ -77,12 +78,19 @@
 (defvar *bot-thread-period* 3600
   "Number of seconds between searches by the bot.")
 
+(defun bot-thread-step-internal ()
+  (let ((tweets (ignore-errors (find-taxation-tweets))))
+    (ignore-errors (reply-to-search-results tweets))
+    (sleep *bot-thread-period*)))
+
+(defun bot-thread-step ()
+  (restart-case (bot-thread-step-internal)
+    (continue ()
+      :report "Continue handling taxation tweets.")))
+
 (defun bot-thread-loop ()
   (authenticate)
-  (loop for tweets = (ignore-errors (find-taxation-tweets))
-     do
-       (ignore-errors (reply-to-search-results tweets))
-       (sleep *bot-thread-period*)))
+  (loop do (bot-thread-step)))
 
 (defvar *bot-thread* nil)
 
