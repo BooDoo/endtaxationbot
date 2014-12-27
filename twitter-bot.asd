@@ -1,8 +1,8 @@
 ; -*- mode: lisp -*-
 (in-package #:cl-user)
 
-(asdf:defsystem :end-taxation-bot
-  :description "A simple Twitter bot that equates taxation with extortion."
+(asdf:defsystem :twitter-bot
+  :description "A simple Twitter bot framework."
   :author "Bill St. Clair <bill@billstclair.com>"
   :version "0.1"
   :license "BSD 2-Clause License"
@@ -13,4 +13,5 @@
   :components
   ((:file "package")
    (:file "twitter-patches")
-   (:file "bot" :depends-on ("package"))))
+   (:file "twitter-bot" :depends-on ("package"))
+   (:file "etb" :depends-on ("package" "twitter-bot"))))

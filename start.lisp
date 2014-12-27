@@ -7,23 +7,26 @@
            (load "http://beta.quicklisp.org/quicklisp.lisp")
            (funcall (find-symbol "INSTALL" :quicklisp-quickstart)))))
 
-(defvar *etb-directory*
+(defvar *twitter-bot-directory*
   (directory-namestring *loading-file-source-file*))
 
-(defun etb-relative-path (path)
-  (merge-pathnames path *etb-directory*))
+(defun twitter-bot-relative-path (path)
+  (merge-pathnames path *twitter-bot-directory*))
 
-(defun load-etb-relative (path)
-  (load (etb-relative-path path)))
+(defun load-twitter-bot-relative (path)
+  (load (twitter-bot-relative-path path)))
 
 ;; Change "http://" to "https://", as Twitter now requires
-(load-etb-relative "twitter-preload-patches")
+(load-twitter-bot-relative "twitter-preload-patches")
 
-(defun reload-etb ()
-  (load-etb-relative "end-taxation-bot.asd")
-  (ql:quickload :end-taxation-bot :verbose t))
+(defun reload-twitter-bot ()
+  (load-twitter-bot-relative "twitter-bot.asd")
+  (ql:quickload :twitter-bot :verbose t))
 
-(reload-etb)
+(reload-twitter-bot)
 
-(defun etb ()
-  (in-package :end-taxation-bot))
+(defun :twitter-bot ()
+  (in-package :twitter-bot))
+
+(defun :etb ()
+  (in-package :etb))

@@ -1,18 +1,34 @@
 ; -*- mode: lisp -*-
 
-(cl:defpackage :end-taxation-bot
-  (:nicknames #:etb)
+(cl:defpackage :twitter-bot
   (:use :cl :anaphora)
   (:import-from :ccl
                 #:quit)
   (:export #:start-swank
            #:reload
-           #:total-replies
+           #:authenticate
+           #:tweet
+           #:@reply-to
+           #:avoiding-duplicate-users
+           #:time-tails
+           #:bot
+           #:step-function
+           #:make-bot
+           #:delete-bot
+           #:time-zone
+           #:time-string
            #:start-bot-thread
            ))
 
-(in-package :etb)
+(cl:defpackage :end-taxation-bot
+  (:nicknames :etb)
+  (:use :cl :anaphora)
+  (:import-from :ccl
+                #:quit)
+  (:export #:start-etb
+           #:total-replies))
 
+(in-package :twitter-bot)
 
 ;;;
 ;;; Utilities
@@ -27,5 +43,5 @@
              :port port :dont-close t)))
 
 (defun reload ()
-  (load (asdf:system-definition-pathname :end-taxation-bot))
-  (ql:quickload :end-taxation-bot :verbose t))
+  (load (asdf:system-definition-pathname :twitter-bot))
+  (ql:quickload :twitter-bot :verbose t))
