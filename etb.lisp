@@ -48,7 +48,7 @@
                   :key #'twit:tweet-id))
     (values res *since-id*)))
 
-(defparameter *pause-between-tweets* 1)
+(defparameter *pause-between-tweets* 0.5)
 
 (defun reply-to-search-results (tweets)
   (let ((first t))
@@ -58,21 +58,15 @@
       (ignore-errors (@reply-to tweet)))))
 
 (defun etb-step (bot idx)
-  (declare (ignore idx))
-  ;; Remove initial times
-  (setf (cdr (twitter-bot:time-tails bot)) nil)
+  (declare (ignore bot idx))
   (let ((tweets (ignore-errors (find-taxation-tweets))))
     (reply-to-search-results tweets)))
 
 (defvar *etb-bot* nil)
 
 (defun start-etb ()
-  (let* ((time (get-universal-time))
-         (now (twitter-bot:time-string time))
-         (now+1 (twitter-bot:time-string (+ time 60))))
-    (setf *etb-bot*
-          (twitter-bot:make-bot
-           :user-name *etb-user-name*
-           :time-tails (list "00"             ;tweet on the hour
-                             now now+1)       ;just so we see something right away
-           :step-function 'etb-step))))
+  (setf *etb-bot*
+        (twitter-bot:make-bot
+         :user-name *etb-user-name*
+         :time-tails '("00")            ;tweet on the hour
+         :step-function 'etb-step)))

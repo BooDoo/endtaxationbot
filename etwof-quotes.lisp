@@ -5,9 +5,13 @@
 (cl:defpackage :etwof-quote-bot
   (:nicknames :eqb)
   (:use :cl)
-  (:export #:start-bot))
+  (:export #:reload
+           #:start-bot))
 
 (in-package :eqb)
+
+(defun reload ()
+  (ql:quickload :etwof-quote-bot :verbose t))
 
 (defparameter *twitter-name* "EtWoFQuoteBot")
 
@@ -58,16 +62,10 @@
           (qn (format nil "http://etwof.com/q/~a" qn))
           (t (format nil "http://etwof.com/blog/~a" alias)))))
 
-(defun get-node-text-and-url (node-number)
-  (let* ((node (ll::read-node node-number (db)))
-         (body (getf node :body))
-         (alias (car (getf node :aliases))))
-    (values (body-to-text body)
-            (alias-to-url alias))))
-
 (defparameter *quote-category* 18)
 
-(defparameter *etwof-data-dir* "etwof-data")
+(defparameter *etwof-data-dir*
+  (asdf:system-relative-pathname :lisplog "etwof-data"))
 
 (defvar *db* nil)
 
@@ -81,6 +79,13 @@
 (defun random-quote-node ()
   (let* ((alist (quote-alist)))
     (car (elt alist (random (length alist))))))
+
+(defun get-node-text-and-url (node-number)
+  (let* ((node (ll::read-node node-number (db)))
+         (body (getf node :body))
+         (alias (car (getf node :aliases))))
+    (values (body-to-text body)
+            (alias-to-url alias))))
 
 (defun random-quote-and-url ()
   (get-node-text-and-url (random-quote-node)))
@@ -99,28 +104,17 @@
                   *ellipsis-char*
                   url)))))
 
-(defparameter *times* '("00:00" "04:00" "08:00" "12:00" "16:00" "20:00"))
-(defvar *times-length* 6)
-
 (defun bot-step (bot idx)
-  (declare (ignore idx))
-  ;; Remove initial times
-  (let* ((tails (twitter-bot:time-tails bot))
-         (tails-len (length tails)))
-    (when (> tails-len *times-length*)
-      (setf (cdr (nthcdr (1- *times-length*) tails)) nil)))
+  (declare (ignore bot idx))
   (twitter-bot:tweet (random-quote-tweet)))
 
 (defvar *bot* nil)
 
+(defparameter *times* '("00:00" "04:00" "08:00" "12:00" "16:00" "20:00"))
+
 (defun start-bot ()
-  (let* ((time (get-universal-time))
-         (now (twitter-bot:time-string time))
-         (now+1 (twitter-bot:time-string (+ time 60)))
-         (times `(,@*times* ,now ,now+1)))
-    (setf *times-length* (length *times*))
-    (setf *bot*
-          (twitter-bot:make-bot
-           :user-name *twitter-name*
-           :time-tails times
-           :step-function 'bot-step))))
+  (setf *bot*
+        (twitter-bot:make-bot
+         :user-name *twitter-name*
+         :time-tails *times*
+         :step-function 'bot-step)))
