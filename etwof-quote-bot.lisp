@@ -79,6 +79,9 @@
 (defparameter *etwof-data-dir*
   (asdf:system-relative-pathname :lisplog "etwof-data"))
 
+(unless (probe-file *etwof-data-dir*)
+  (error "Directory does not exist: ~s" *etwof-data-dir*))
+
 (defvar *db* nil)
 
 (defun db ()

@@ -1,3 +1,6 @@
+;;;;
+;;;; Load the :
+
 (in-package :cl-user)
 
 (unless (find-package "QUICKLISP")
