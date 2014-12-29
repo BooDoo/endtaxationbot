@@ -69,5 +69,5 @@
   (setf *etb-bot*
         (twitter-bot:make-bot
          :user-name *etb-user-name*
-         :time-tails '("00")            ;tweet on the hour
+         :time-tails '("15")            ;tweet on the quarter hour
          :step-function 'etb-step)))
