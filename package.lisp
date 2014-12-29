@@ -25,7 +25,8 @@
   (:use :cl :anaphora)
   (:import-from :ccl
                 #:quit)
-  (:export #:start-etb
+  (:export #:authenticate
+           #:start-etb
            #:total-replies))
 
 (in-package :twitter-bot)

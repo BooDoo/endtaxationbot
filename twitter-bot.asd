@@ -14,4 +14,4 @@
   ((:file "package")
    (:file "twitter-patches")
    (:file "twitter-bot" :depends-on ("package"))
-   (:file "etb" :depends-on ("package" "twitter-bot"))))
+   (:file "end-taxation-bot" :depends-on ("package" "twitter-bot"))))

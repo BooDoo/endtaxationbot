@@ -7,6 +7,7 @@
   :version "0.1"
   :license "BSD 2-Clause License"
   :depends-on (:twitter-bot
+               :fsdb
                :lisplog)
   :components
-  ((:file "etwof-quotes")))
+  ((:file "etwof-quote-bot")))

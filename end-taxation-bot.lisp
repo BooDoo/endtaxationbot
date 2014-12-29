@@ -8,10 +8,11 @@
 
 (defparameter *etb-user-name* "endtaxationbot")
 
-;; The first time you run this bot in a new environment, evaluate
-;; (twitter:repl-authenticate-user), enter the printed URL in your web browser,
-;; when logged in to Twitter as *etb-user-name*, and paste the code into the repl.
-;; OAuth parameters will be saved in ~/.cl-twitter/access/access.ht
+;; Before running this bot to actually post tweets on Twitter, you need
+;; to get an authentication token for the *twitter-name* account.
+;; Do this by calling (etb:authenticate), and following the printed 
+;; instructions.
+;; OAuth parameters are saved in ~/.cl-twitter/access/access.ht
 
 (defun authenticate ()
   (twitter-bot:authenticate *etb-user-name*))

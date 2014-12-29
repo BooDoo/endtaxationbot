@@ -5,7 +5,10 @@
 (cl:defpackage :etwof-quote-bot
   (:nicknames :eqb)
   (:use :cl)
+  (:import-from :ccl
+                #:quit)
   (:export #:reload
+           #:authenticate
            #:start-bot))
 
 (in-package :eqb)
@@ -14,6 +17,15 @@
   (ql:quickload :etwof-quote-bot :verbose t))
 
 (defparameter *twitter-name* "EtWoFQuoteBot")
+
+;; Before running this bot to actually post tweets on Twitter, you need
+;; to get an authentication token for the *twitter-name* account.
+;; Do this by calling (eqb:authenticate), and following the printed 
+;; instructions.
+;; OAuth parameters are saved in ~/.cl-twitter/access/access.ht
+
+(defun authenticate ()
+  (twitter-bot:authenticate *twitter-name*))
 
 (defun scan-to-strings (regex string)
   (let ((scanner (if (stringp regex)
