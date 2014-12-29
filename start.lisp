@@ -1,5 +1,8 @@
 ;;;;
-;;;; Load the :
+;;;; Load the :twitter-bot system
+;;;; You can't load this with simply ql:quickload, since it
+;;;; needs to make a pre-compile patch to cl-twitter.
+;;;;
 
 (in-package :cl-user)
 
