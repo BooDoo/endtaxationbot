@@ -119,9 +119,16 @@
                   *ellipsis-char*
                   url)))))
 
+(defvar *last-tweet* nil)
+
 (defun bot-step (bot idx)
-  (declare (ignore bot idx))
-  (twitter-bot:tweet (random-quote-tweet)))
+  (declare (ignore bot))
+  (let ((tweet (random-quote-tweet)))
+    (setf *last-tweet*
+          `(:time ,(twitter-bot:last-time)
+            :idx ,idx
+            :tweet ,tweet))
+    (twitter-bot:tweet tweet)))
 
 (defvar *bot* nil)
 

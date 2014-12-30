@@ -17,6 +17,7 @@
            #:delete-bot
            #:time-zone
            #:time-string
+           #:last-time
            #:start-bot-thread
            ))
 

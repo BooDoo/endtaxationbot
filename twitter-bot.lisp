@@ -148,23 +148,37 @@
 (defvar *last-time* nil)
 (defvar *last-time-bots* nil)
 
-(defun bot-thread-step ()
-  (let ((time (time-string))
-        (bots nil))
-    (unless (equal time *last-time*)
-      (setf *last-time* time
-            *last-time-bots* nil))
+(defun last-time ()
+  *last-time*)
+
+(defun get-do-bot-list (time-string)
+  (let ((bots nil))
     (dolist (cell *bot-alist*)
       (let* ((bot (cdr cell))
              (tails (time-tails bot)))
-        (unless (member bot *last-time-bots* :test #'eq)
-          (loop for tail in tails
-             for idx from 0
-             do
-               (when (string-tail-p time tail)
-                 (push bot *last-time-bots*)
-                 (push (list bot idx) bots)
-                 (return))))))
+        (loop for tail in tails
+           for idx from 0
+           do
+             (when (string-tail-p time-string tail)
+               (push (list bot idx) bots)
+               (return)))))
+    bots))
+
+(defun bot-thread-step ()
+  (bot-thread-step-internal (time-string)))
+
+(defun bot-thread-step-internal (time-string)
+  (let ((bots nil))
+    (unless (equal time-string *last-time*)
+      (setf *last-time* time-string
+            *last-time-bots* nil))
+    (setf bots
+          (delete-if (lambda (bot)
+                       (member bot *last-time-bots* :test #'eq))
+                     (get-do-bot-list time-string)
+                     :key #'car))
+    (setf *last-time-bots*
+          (nconc (mapcar #'car bots) *last-time-bots*))
     (loop for (bot idx) in bots do
          (ignore-errors (do-bot bot idx)))))
 
