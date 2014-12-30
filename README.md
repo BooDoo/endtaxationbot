@@ -9,10 +9,10 @@ CCL (Clozure Common Lisp), http://ccl.clozure.com/
 The scripts below expect that you have installed CCL, and that it is
 in your path as the `ccl` command.
 
-The :twitter-bot system includes the framework plus an "End Taxation
+The `:twitter-bot` system includes the framework plus an "End Taxation
 Bot". It will run stand-alone.
 
-The :etwof-quote-bot system includes a bot that tweets random quotes
+The `:etwof-quote-bot` system includes a bot that tweets random quotes
 from my End the War on Freedom blog. It requires LispLog.
 
 Loading
@@ -29,7 +29,7 @@ Then, to start the End Taxation bot:
 
 To load the :etwof-quote-bot system, start LispLog, then execute:
 
-   (load "~/endtaxationbot/start-eqb")
+    (load "~/endtaxationbot/start-eqb")
 
 End Taxation Bot
 ----------------
@@ -47,7 +47,7 @@ from this search. The replies are spaced by one second.
 License
 -------
 
-Released under a BSD 2-Clause License. See the LICENSE file.
+Released under a BSD 2-Clause License. See the `LICENSE` file.
 
 Bill St. Clair<br/>
 Created: 23 October 2014<br/>
