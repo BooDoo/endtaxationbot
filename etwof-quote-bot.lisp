@@ -91,16 +91,26 @@
 (defun quote-alist ()
   (ll::read-catnodes *quote-category* (db)))
 
+(defvar *last-quote-elt* nil)
+
 (defun random-quote-node ()
-  (let* ((alist (quote-alist)))
-    (car (elt alist (random (length alist))))))
+  (let* ((alist (quote-alist))
+         (len (length alist))
+         elt)
+    (unless (eql len 0)
+      (loop while (or (eql *last-quote-elt*
+                           (setf elt (random len)))
+                      (eql len 1)))
+      (values (car (elt alist elt))
+              (setf *last-quote-elt* elt)))))
 
 (defun get-node-text-and-url (node-number)
-  (let* ((node (ll::read-node node-number (db)))
-         (body (getf node :body))
-         (alias (car (getf node :aliases))))
-    (values (body-to-text body)
-            (alias-to-url alias))))
+  (when node-number
+    (let* ((node (ll::read-node node-number (db)))
+           (body (getf node :body))
+           (alias (car (getf node :aliases))))
+      (values (body-to-text body)
+              (alias-to-url alias)))))
 
 (defun random-quote-and-url ()
   (get-node-text-and-url (random-quote-node)))
@@ -110,25 +120,27 @@
 
 (defun random-quote-tweet ()
   (multiple-value-bind (quote url) (random-quote-and-url)
-    (setf quote (delete #\" quote))
-    (let ((len (length quote)))
-      (if (<= len 140)
-          quote
-          (format nil "~a~c ~a"
-                  (subseq quote 0 (- 140 (twitter-bot:short-url-length) 2))
-                  *ellipsis-char*
-                  url)))))
+    (when quote
+      (setf quote (delete #\" quote))
+      (let ((len (length quote)))
+        (if (<= len 140)
+            quote
+            (format nil "~a~c ~a"
+                    (subseq quote 0 (- 140 (twitter-bot:short-url-length) 2))
+                    *ellipsis-char*
+                    url))))))
 
 (defvar *last-tweet* nil)
 
 (defun bot-step (bot idx)
   (declare (ignore bot))
   (let ((tweet (random-quote-tweet)))
-    (setf *last-tweet*
-          `(:time ,(twitter-bot:last-time)
-            :idx ,idx
-            :tweet ,tweet))
-    (twitter-bot:tweet tweet)))
+    (when tweet
+      (setf *last-tweet*
+            `(:time ,(twitter-bot:last-time)
+                    :idx ,idx
+                    :tweet ,tweet))
+      (twitter-bot:tweet tweet))))
 
 (defvar *bot* nil)
 
