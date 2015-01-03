@@ -115,7 +115,7 @@
       (if (<= len 140)
           quote
           (format nil "~a~c ~a"
-                  (subseq quote 0 (- 140 (length url) 2))
+                  (subseq quote 0 (- 140 (twitter-bot:short-url-length) 2))
                   *ellipsis-char*
                   url)))))
 

@@ -5,6 +5,8 @@
 
 (in-package :twitter)
 
+(export 'twitter-configuration)
+
 (defun safe-decode-json (response-stream)
   (let ((json:*json-identifier-name-to-lisp* 'convert-from-twitter))
     (declare (special json:*json-identifier-name-to-lisp*
@@ -16,3 +18,10 @@
                                   (declare (ignore c))
                                   (invoke-restart 'json:substitute-char #\.))))
       (json:decode-json response-stream))))
+
+(define-command help/configuration (:get :identity)
+    (twitter-app-uri "help/configuration.json")
+    "Returns a json object representing Twitter's configuration.")
+
+(defun twitter-configuration ()
+  (apply 'twitter-op :help/configuration nil))

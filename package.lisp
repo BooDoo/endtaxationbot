@@ -18,6 +18,7 @@
            #:time-zone
            #:time-string
            #:last-time
+           #:short-url-length
            #:start-bot-thread
            ))
 

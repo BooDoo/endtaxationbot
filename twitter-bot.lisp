@@ -165,6 +165,26 @@
                   (return-from do-bot nil))))
       (funcall (step-function bot) bot idx))))
 
+(defvar *configuration-alist* nil
+  "Alist returned by `twit:twitter-configuration'.")
+
+(defvar *last-configuration-time* nil)
+
+(defun maybe-get-configuration (time-string)
+  (let ((first-bot (cdar *bot-alist*)))
+    (when (and first-bot
+               (string-tail-p time-string "00:00")
+               (not (equal time-string *last-configuration-time*)))
+    (setf *configuration-alist*
+          (let ((twit:*twitter-user* (twitter-user first-bot)))
+            (twit:twitter-configuration)))
+    (setf *last-configuration-time* time-string))))
+
+(defun short-url-length (&optional https-p)
+  (or (cdr (assoc (if https-p :short-url-length-https :short-url-length)
+                  *configuration-alist*))
+      (if https-p 23 22)))
+
 (defvar *last-time* nil)
 (defvar *last-time-bots* nil)
 
@@ -188,6 +208,7 @@
   (bot-thread-step-internal (time-string)))
 
 (defun bot-thread-step-internal (time-string)
+  (ignore-errors (maybe-get-configuration time-string))
   (let ((bots nil))
     (unless (equal time-string *last-time*)
       (setf *last-time* time-string
