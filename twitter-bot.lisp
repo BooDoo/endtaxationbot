@@ -138,12 +138,32 @@
     (and (<= tail-len str-len)
          (string= string tail :start1 (- str-len tail-len)))))
 
+(defvar *error-log* nil)
+(defparameter *error-log-length* 10)
+
+(defvar *error-log-lock* (bt:make-recursive-lock "*error-log*"))
+
+(defmacro with-error-log-locked (() &body body)
+  `(bt:with-recursive-lock-held (*error-log-lock*) ,@body))
+
+(defun log-error (c)
+  (let ((info (trivial-backtrace:print-backtrace c :output nil)))
+    (with-error-log-locked ()
+      (let ((diff (- (length *error-log*) *error-log-length*)))
+        (when (>= diff 0)
+          (setf *error-log* (nbutlast *error-log* (1+ diff)))))
+      (push info *error-log*))))
+
 (defun do-bot (bot idx)
   (check-type bot bot)
   (check-type idx integer)
   (let ((*bot-user-name* (user-name bot))
         (twit:*twitter-user* (twitter-user bot)))
-    (funcall (step-function bot) bot idx)))
+    (handler-bind
+        ((error (lambda (c)
+                  (log-error c)
+                  (return-from do-bot nil))))
+      (funcall (step-function bot) bot idx))))
 
 (defvar *last-time* nil)
 (defvar *last-time-bots* nil)

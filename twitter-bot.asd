@@ -9,6 +9,7 @@
   :depends-on (:cl-twitter
                :cl-twit-repl
                :bordeaux-threads
+               :trivial-backtrace
                :anaphora)
   :components
   ((:file "package")
