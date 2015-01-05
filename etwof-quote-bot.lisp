@@ -98,9 +98,9 @@
          (len (length alist))
          elt)
     (unless (eql len 0)
-      (loop while (or (eql *last-quote-elt*
-                           (setf elt (random len)))
-                      (eql len 1)))
+      (loop while (and (eql *last-quote-elt*
+                            (setf elt (random len)))
+                       (> len 1)))
       (values (car (elt alist elt))
               (setf *last-quote-elt* elt)))))
 
@@ -121,14 +121,36 @@
 (defun random-quote-tweet ()
   (multiple-value-bind (quote url) (random-quote-and-url)
     (when quote
-      (setf quote (delete #\" quote))
-      (let ((len (length quote)))
-        (if (<= len 140)
-            quote
-            (format nil "~a~c ~a"
-                    (subseq quote 0 (- 140 (twitter-bot:short-url-length) 2))
-                    *ellipsis-char*
-                    url))))))
+      (shorten-quote quote url))))
+
+(defun shorten-quote (quote url)
+  (setf quote (delete #\" quote))
+  (let ((len (length quote)))
+    (if (<= len 140)
+        quote
+        (format nil "~a~c ~a"
+                (subseq quote 0 (- 140 (twitter-bot:short-url-length) 2))
+                *ellipsis-char*
+                url))))
+
+(defun find-duplicate-quotes ()
+  (loop with hash = (make-hash-table :test 'equalp)
+     with duplicates = nil
+     for (node) in (quote-alist)
+     for (text url) = (multiple-value-list (get-node-text-and-url node))
+     for quote = (and text (shorten-quote text url))
+     for count from 1
+     do
+       (when quote
+         (let ((cell (gethash quote hash)))
+           (cond (cell
+                  (push node (cdr cell))
+                  (cond ((> (length (cdr cell)) 2)
+                         (setf (cdr (assoc quote duplicates :test #'equalp))
+                               (cdr cell)))
+                        (t (push (cons quote (cdr cell)) duplicates))))
+                 (t (setf (gethash quote hash) (list node))))))
+     finally (return (values duplicates count))))
 
 (defvar *last-tweet* nil)
 
